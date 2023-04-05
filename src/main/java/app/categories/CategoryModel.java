@@ -1,4 +1,4 @@
-package categories;
+package app.categories;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

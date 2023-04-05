@@ -1,4 +1,4 @@
-package notes.dto;
+package app.notes.dto;
 
 public class UpdateNoteDto {
 

@@ -1,4 +1,4 @@
-package categories.dto;
+package app.categories.dto;
 
 public class UpdateCategoryDto {
 

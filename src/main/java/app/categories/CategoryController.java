@@ -1,16 +1,16 @@
-package categories;
+package app.categories;
 
 import org.springframework.web.bind.annotation.RestController;
-import categories.dto.CreateCategoryDto;
-import categories.CategoryService;
+import app.categories.dto.CreateCategoryDto;
+import app.categories.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import lib.LoggerWrapper;
+import app.lib.LoggerWrapper;
 
 @RestController
 @RequestMapping("/api/v1")
-// @RequiredArgsConstructor
+@RequiredArgsConstructor
 public class CategoryController {
     private CategoryService categoryService;
     private LoggerWrapper logger;

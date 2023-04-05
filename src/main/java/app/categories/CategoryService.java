@@ -1,9 +1,9 @@
-package categories;
+package app.categories;
 
-import lib.LoggerWrapper;
-import categories.CategoryRepository;
-import categories.CategoryModel;
-import categories.dto.CreateCategoryDto;;
+import app.lib.LoggerWrapper;
+import app.categories.CategoryRepository;
+import app.categories.CategoryModel;
+import app.categories.dto.CreateCategoryDto;;
 
 public class CategoryService {
     private CategoryRepository categoryRepository;
