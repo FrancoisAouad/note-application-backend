@@ -15,7 +15,7 @@ public class CategoryController {
     private CategoryService categoryService;
     private LoggerWrapper logger;
 
-    @PostMapping("/note")
+    @PostMapping("/category")
     @ResponseStatus(HttpStatus.CREATED)
     public void createCategory(@RequestBody CreateCategoryDto createCategoryDto) {
         try {
@@ -23,11 +23,5 @@ public class CategoryController {
         } catch (Exception e) {
             logger.info("Failed to create category in 'createCategory");
         }
-    }
-
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public String getHomeMessage() {
-        return "hello";
     }
 }
