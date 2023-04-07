@@ -29,13 +29,13 @@ public class NoteModel {
     // inverseJoinColumns = @JoinColumn(name = "tag_id"))
     // private List<TagModel> tags;
 
-    @ElementCollection
-    @Column(name = "image_location")
-    private List<String> imageLocation;
+    // @ElementCollection
+    // @Column(name = "image_location")
+    // private List<String> imageLocation;
 
-    @ElementCollection
-    @Column(name = "attachment_location")
-    private List<String> attachmentLocation;
+    // @ElementCollection
+    // @Column(name = "attachment_location")
+    // private List<String> attachmentLocation;
 
     // @ManyToOne
     // @JoinColumn(name = "category_id", nullable = false)
@@ -57,22 +57,22 @@ public class NoteModel {
     @Column(name = "updated_date", nullable = false)
     private Date updatedDate;
 
-    // public NoteModel(String title, String content, List<TagModel> tags,
-    // List<String> imageLocation,
-    // List<String> attachmentLocation, CategoryModel category, UserModel creator,
-    // String creatorName,
-    // String creatorEmail, Date createdDate, Date updatedDate) {
-    // this.title = title;
-    // this.content = content;
-    // this.tags = tags;
-    // this.imageLocation = imageLocation;
-    // this.attachmentLocation = attachmentLocation;
-    // this.category = category;
-    // this.creator = creator;
-    // this.creatorName = creatorName;
-    // this.creatorEmail = creatorEmail;
-    // this.createdDate = createdDate;
-    // this.updatedDate = updatedDate;
-    // }
+    @Column(name = "published", nullable = false)
+    private boolean published;
+
+    public NoteModel(String title, String content, String creatorName, String creatorEmail, Date createdDate,
+            Date updatedDate) {
+        this.title = title;
+        this.content = content;
+        // this.tags = tags;
+        // this.imageLocation = imageLocation;
+        // this.attachmentLocation = attachmentLocation;
+        // this.category = category;
+        // this.creator = creator;
+        this.creatorName = creatorName;
+        this.creatorEmail = creatorEmail;
+        this.createdDate = createdDate;
+        this.updatedDate = updatedDate;
+    }
 
 }
