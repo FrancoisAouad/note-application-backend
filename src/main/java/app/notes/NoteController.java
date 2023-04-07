@@ -53,8 +53,7 @@ public class NoteController {
         if (noteData.isPresent()) {
             NoteModel existingNote = noteData.get();
             existingNote.setTitle(note.getTitle());
-            existingNote.setDescription(note.getDescription());
-            existingNote.setPublished(note.isPublished());
+            existingNote.setContent(note.getContent());
             return new ResponseEntity<>(noteRepository.save(existingNote), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

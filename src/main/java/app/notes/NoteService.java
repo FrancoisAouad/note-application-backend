@@ -32,9 +32,9 @@ public class NoteService {
         List<NoteModel> noteModels = new ArrayList<>();
         for (Object[] result : results) {
             NoteModel noteModel = new NoteModel();
-            noteModel.setId((Long) result[0]);
+            noteModel.setId((String) result[0]);
             noteModel.setTitle((String) result[1]);
-            noteModel.setDescription((String) result[2]);
+            noteModel.setContent((String) result[2]);
             noteModels.add(noteModel);
         }
         if (noteModels.isEmpty()) {
