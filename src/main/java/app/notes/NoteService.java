@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 // Utils
 import java.util.Date;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 // Services
 import app.notes.dto.CreateNoteDto;
 import app.notes.dto.UpdateNoteDto;
@@ -18,6 +20,7 @@ public class NoteService {
 
     @Autowired
     private NoteRepository noteRepository;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * @function getAllNotes - Method to return list of notes
@@ -26,8 +29,10 @@ public class NoteService {
     public ResponseEntity<List<NoteModel>> getAll() {
         List<NoteModel> noteList = noteRepository.findAll();
         if (noteList.isEmpty()) {
+            logger.warn("Notes not found");
             return ResponseEntity.noContent().build();
         } else {
+            logger.info("Successfully returned a list of notes.");
             return ResponseEntity.ok(noteList);
         }
     }
@@ -45,8 +50,14 @@ public class NoteService {
                 .createdDate(new Date())
                 .updatedDate(new Date())
                 .build();
-        NoteModel savedNoteModel = noteRepository.save(newNote);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedNoteModel);
+        try {
+            NoteModel savedNoteModel = noteRepository.save(newNote);
+            logger.info("Successfully created a new note");
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedNoteModel);
+        } catch (Exception e) {
+            logger.error("Failed to create a note");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     /**
@@ -57,8 +68,10 @@ public class NoteService {
     public ResponseEntity<NoteModel> getById(String id) {
         NoteModel note = noteRepository.getNoteById(id);
         if (note == null) {
+            logger.info("Failed to retrieve requested note");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+        logger.info("Successfully returned note");
         return ResponseEntity.ok(note);
 
     }
@@ -72,6 +85,7 @@ public class NoteService {
     public ResponseEntity<NoteModel> update(String id, UpdateNoteDto noteDto) {
         NoteModel note = noteRepository.getNoteById(id);
         if (note == null) {
+            logger.warn("Failed to find the requested note to update");
             return ResponseEntity.notFound().build();
         }
         if (noteDto.getTitle() != null) {
@@ -81,6 +95,7 @@ public class NoteService {
             note.setContent(noteDto.getContent());
         }
         note.setUpdatedDate(new Date());
+        logger.info("Successfully updated note");
         return ResponseEntity.ok(note);
     }
 
