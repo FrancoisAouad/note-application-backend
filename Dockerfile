@@ -11,8 +11,8 @@ COPY target/my-project.jar app.jar
 RUN addgroup -S spring && adduser -S spring -G spring
 USER spring:spring
 
-# Expose port 8080 for the application
-EXPOSE 8080
+# Expose port 9000 for the application
+EXPOSE 9000
 
 # Set JVM options
 ENV JAVA_OPTS=""

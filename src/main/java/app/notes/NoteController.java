@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 // Services
 import app.notes.dto.CreateNoteDto;
+import app.notes.dto.DeleteSelectedNotesDto;
 import app.notes.dto.UpdateNoteDto;
 
 @RestController
@@ -27,6 +28,12 @@ public class NoteController {
         return noteService.create(note);
     }
 
+    @DeleteMapping()
+    public ResponseEntity<Void> deleteAllNotes(@RequestBody DeleteSelectedNotesDto request) {
+        List<String> ids = request.getIds();
+        return noteService.deleteAll(ids);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<NoteModel> getById(@PathVariable("id") String id) {
         return noteService.getById(id);
@@ -37,24 +44,9 @@ public class NoteController {
         return noteService.update(id, note);
     }
 
-    // @DeleteMapping("/{id}")
-    // public ResponseEntity<Void> deleteNoteById(@PathVariable("id") long id) {
-    // try {
-    // noteService.deleteNoteById(id);
-    // return ResponseEntity.noContent().build();
-    // } catch (Exception e) {
-    // System.out.println(e);
-    // }
-    // }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteNoteById(@PathVariable("id") String id) {
+        return noteService.delete(id);
+    }
 
-    // @DeleteMapping()
-    // public ResponseEntity<Void> deleteAllNotes() {
-    // try {
-    // noteService.deleteAllNotes();
-    // return ResponseEntity.noContent().build();
-
-    // } catch (Exception e) {
-    // System.out.println(e);
-    // }
-    // }
 }

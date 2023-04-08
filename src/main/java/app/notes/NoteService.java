@@ -52,7 +52,6 @@ public class NoteService {
                 .id(GlobalService.generateUUID())
                 .title(noteDto.getTitle())
                 .content(noteDto.getContent())
-                // .categoryId(noteDto.getCategoryId())
                 .createdDate(new Date())
                 .updatedDate(new Date())
                 .build();
@@ -115,6 +114,26 @@ public class NoteService {
         note.setUpdatedDate(new Date());
         logger.info("Successfully updated note");
         return ResponseEntity.ok(note);
+    }
+
+    /**
+     * @function delete - Deletes a single record
+     * @param id
+     * @return ResponseEntity<Void>
+     */
+    public ResponseEntity<Void> delete(String id) {
+        noteRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * @function deleteAll - Deletes a list of records
+     * @param id
+     * @return ResponseEntity<Void>
+     */
+    public ResponseEntity<Void> deleteAll(List<String> ids) {
+        noteRepository.deleteSelected(ids);
+        return ResponseEntity.noContent().build();
     }
 
 }
