@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import app.notes.dto.CreateNoteDto;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
+import java.util.UUID;
 
 @Service
 public class NoteService {
@@ -25,7 +25,7 @@ public class NoteService {
     }
 
     public ResponseEntity<NoteModel> createNote(CreateNoteDto noteDto) {
-        NoteModel newNote = NoteModel.builder().id(generateRandomString((8))).title(noteDto.getTitle())
+        NoteModel newNote = NoteModel.builder().id(generateUUID()).title(noteDto.getTitle())
                 .content(noteDto.getContent())
                 .createdDate(new Date()).updatedDate(new Date()).published(false)
                 .build();
@@ -33,14 +33,17 @@ public class NoteService {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedNoteModel);
     }
 
-    public static String generateRandomString(int length) {
-        final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        Random rand = new Random();
-        StringBuilder sb = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            sb.append(chars.charAt(rand.nextInt(chars.length())));
-        }
-        return sb.toString();
+    public static String generateUUID() {
+        UUID uuid = UUID.randomUUID();
+        String uuidString = uuid.toString();
+        String formattedUUID = uuidString.substring(0, 8) + "-" + uuidString.substring(8, 12) + "-"
+                + uuidString.substring(12, 16) + "-" + uuidString.substring(16, 20) + "-" + uuidString.substring(20);
+        return formattedUUID;
+    }
+
+    public ResponseEntity<NoteModel> getNoteById(String id) {
+        NoteModel note = noteRepository.getNoteById(id);
+        return ResponseEntity.ok().body(note);
     }
 
 }

@@ -36,19 +36,18 @@ public class NoteController {
             return ResponseEntity.notFound().build();
         }
     }
-    // @GetMapping("/{id}")
-    // public ResponseEntity<NoteModel> getNoteById(@PathVariable("id") long id) {
-    // try {
-    // NoteModel note = noteService.getNoteById(id);
-    // if (note == null) {
-    // return ResponseEntity.notFound().build();
-    // }
-    // return ResponseEntity.ok(note);
 
-    // } catch (Exception e) {
-    // System.out.println(e);
-    // }
-    // }
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseEntity<NoteModel>> getNoteById(@PathVariable("id") String id) {
+        try {
+            ResponseEntity<NoteModel> note = noteService.getNoteById(id);
+            return ResponseEntity.ok(note);
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
+    }
 
     // @PutMapping("/{id}")
     // public ResponseEntity<NoteModel> updateNote(@PathVariable("id") long id,
