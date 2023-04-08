@@ -6,8 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import app.notes.dto.CreateNoteDto;
 import java.util.Date;
+import app.utils.GlobalService;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class NoteService {
@@ -19,12 +19,12 @@ public class NoteService {
      * @function getAllNotes - Method to return list of notes
      * @return
      */
-    public ResponseEntity<List<NoteModel>> getAllNotes() {
-        List<NoteModel> noteModels = noteRepository.findAll();
-        if (noteModels.isEmpty()) {
+    public ResponseEntity<List<NoteModel>> getAll() {
+        List<NoteModel> noteList = noteRepository.findAll();
+        if (noteList.isEmpty()) {
             return ResponseEntity.noContent().build();
         } else {
-            return ResponseEntity.ok(noteModels);
+            return ResponseEntity.ok(noteList);
         }
     }
 
@@ -33,25 +33,16 @@ public class NoteService {
      * @param noteDto - Fields needed to create a note
      * @return
      */
-    public ResponseEntity<NoteModel> createNote(CreateNoteDto noteDto) {
-        NoteModel newNote = NoteModel.builder().id(generateUUID()).title(noteDto.getTitle())
+    public ResponseEntity<NoteModel> create(CreateNoteDto noteDto) {
+        NoteModel newNote = NoteModel.builder()
+                .id(GlobalService.generateUUID())
+                .title(noteDto.getTitle())
                 .content(noteDto.getContent())
-                .createdDate(new Date()).updatedDate(new Date()).published(false)
+                .createdDate(new Date())
+                .updatedDate(new Date())
                 .build();
         NoteModel savedNoteModel = noteRepository.save(newNote);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedNoteModel);
-    }
-
-    /**
-     * @function generateUUID - Helper method to generate a unique id for each note
-     * @return
-     */
-    public static String generateUUID() {
-        UUID uuid = UUID.randomUUID();
-        String uuidString = uuid.toString();
-        String formattedUUID = uuidString.substring(0, 8) + "-" + uuidString.substring(8, 12) + "-"
-                + uuidString.substring(12, 16) + "-" + uuidString.substring(16, 20) + "-" + uuidString.substring(20);
-        return formattedUUID;
     }
 
     /**
@@ -59,7 +50,7 @@ public class NoteService {
      * @param id - uuid if the note
      * @return
      */
-    public ResponseEntity<NoteModel> getNoteById(String id) {
+    public ResponseEntity<NoteModel> getById(String id) {
         NoteModel note = noteRepository.getNoteById(id);
         return ResponseEntity.ok(note);
 

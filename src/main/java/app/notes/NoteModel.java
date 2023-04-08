@@ -38,8 +38,6 @@ public class NoteModel {
     @Column(name = "updated_date", nullable = false)
     private Date updatedDate;
 
-    // @Column(name = "published", nullable = false)
-    private boolean published;
     // @ManyToMany
     // @JoinTable(name = "notes_tags", joinColumns = @JoinColumn(name = "note_id"),
     // inverseJoinColumns = @JoinColumn(name = "tag_id"))

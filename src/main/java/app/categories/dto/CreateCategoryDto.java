@@ -1,18 +1,16 @@
-package app.notes.dto;
+package app.categories.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-// import java.util.Date;
 
 @Data
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class CreateNoteDto {
+public class CreateCategoryDto {
 
-    private String title;
-    private String content;
+    private String categoryName;
 
 }

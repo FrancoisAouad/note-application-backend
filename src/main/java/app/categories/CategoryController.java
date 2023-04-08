@@ -1,23 +1,23 @@
-package app.notes;
+package app.categories;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import app.notes.dto.CreateNoteDto;
+import app.categories.dto.CreateCategoryDto;
 import java.util.List;
 
 @RestController
-@RequestMapping("/notes")
-public class NoteController {
+@RequestMapping("/categories")
+public class CategoryController {
 
     @Autowired
-    private NoteService noteService;
+    private CategoryService categoryService;
 
     @GetMapping()
-    public ResponseEntity<List<NoteModel>> getAll() {
+    public ResponseEntity<List<CategoryModel>> getAll() {
         try {
-            ResponseEntity<List<NoteModel>> result = noteService.getAll();
+            ResponseEntity<List<CategoryModel>> result = categoryService.getAll();
             return result;
         } catch (Exception e) {
             System.out.println(e);
@@ -27,9 +27,9 @@ public class NoteController {
     }
 
     @PostMapping()
-    public ResponseEntity<NoteModel> create(@RequestBody CreateNoteDto note) {
+    public ResponseEntity<CategoryModel> create(@RequestBody CreateCategoryDto category) {
         try {
-            ResponseEntity<NoteModel> result = noteService.create(note);
+            ResponseEntity<CategoryModel> result = categoryService.create(category);
             return ResponseEntity.status(HttpStatus.CREATED).body(result.getBody());
         } catch (Exception e) {
             System.out.println(e);
@@ -38,9 +38,10 @@ public class NoteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<NoteModel> getById(@PathVariable("id") String id) {
+    public ResponseEntity<CategoryModel> getNoteById(@PathVariable("id") String id) {
         try {
-            ResponseEntity<NoteModel> result = noteService.getById(id);
+            ResponseEntity<CategoryModel> result = categoryService.getById(id);
+            System.out.println(result);
             return result;
         } catch (Exception e) {
             System.out.println(e);
@@ -49,10 +50,10 @@ public class NoteController {
     }
 
     // @PutMapping("/{id}")
-    // public ResponseEntity<NoteModel> updateNote(@PathVariable("id") long id,
-    // @RequestBody NoteModel note) {
+    // public ResponseEntity<CategoryModel> updateNote(@PathVariable("id") long id,
+    // @RequestBody CategoryModel note) {
     // try {
-    // NoteModel updatedNote = noteService.updateNote(id, note);
+    // CategoryModel updatedNote = categoryService.updateNote(id, note);
     // if (updatedNote == null) {
     // return ResponseEntity.notFound().build();
     // }
@@ -66,7 +67,7 @@ public class NoteController {
     // @DeleteMapping("/{id}")
     // public ResponseEntity<Void> deleteNoteById(@PathVariable("id") long id) {
     // try {
-    // noteService.deleteNoteById(id);
+    // categoryService.deleteNoteById(id);
     // return ResponseEntity.noContent().build();
     // } catch (Exception e) {
     // System.out.println(e);
@@ -76,7 +77,7 @@ public class NoteController {
     // @DeleteMapping()
     // public ResponseEntity<Void> deleteAllNotes() {
     // try {
-    // noteService.deleteAllNotes();
+    // categoryService.deleteAllNotes();
     // return ResponseEntity.noContent().build();
 
     // } catch (Exception e) {
