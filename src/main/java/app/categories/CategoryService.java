@@ -83,4 +83,23 @@ public class CategoryService {
         return categoryRepository.findById(id);
     }
 
+    /**
+     * @function delete - Deletes a single record
+     * @param id
+     * @return ResponseEntity<Void>
+     */
+    public ResponseEntity<Void> delete(String id) {
+        categoryRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * @function deleteAll - Deletes a list of records
+     * @param id
+     * @return ResponseEntity<Void>
+     */
+    public ResponseEntity<Void> deleteAll(List<String> ids) {
+        categoryRepository.deleteSelected(ids);
+        return ResponseEntity.noContent().build();
+    }
 }
