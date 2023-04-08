@@ -4,94 +4,85 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import app.notes.NoteRepository;
+import app.notes.dto.CreateNoteDto;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/notes")
 public class NoteController {
 
     @Autowired
-    private NoteRepository noteRepository;
     private NoteService noteService;
 
     @GetMapping()
-    public void getAllNotes(@RequestParam(required = false) String title) {
+    public ResponseEntity<List<NoteModel>> getAllNotes() {
         try {
-            noteService.getAllNotes(title);
+            ResponseEntity<List<NoteModel>> result = noteService.getAllNotes();
+            return result;
         } catch (Exception e) {
             System.out.println(e);
         }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
     }
 
+    @PostMapping()
+    public ResponseEntity<NoteModel> createNote(@RequestBody CreateNoteDto note) {
+        try {
+            ResponseEntity<NoteModel> result = noteService.createNote(note);
+            return ResponseEntity.status(HttpStatus.CREATED).body(result.getBody());
+        } catch (Exception e) {
+            System.out.println(e);
+            return ResponseEntity.notFound().build();
+        }
+    }
     // @GetMapping("/{id}")
-    // public NoteModel getNoteById(@PathVariable("id") long id) {
-    // Optional<NoteModel> noteData = noteRepository.findById(id);
-
-    // if (noteData.isPresent()) {
-    // return new ResponseEntity<>(noteData.get(), HttpStatus.OK);
-    // } else {
-    // return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    // }
-    // }
-
-    // @PostMapping()
-    // public NoteModel createNote(@RequestBody NoteModel note) {
+    // public ResponseEntity<NoteModel> getNoteById(@PathVariable("id") long id) {
     // try {
-    // NoteModel createdNote = noteRepository.save(note);
-    // return new ResponseEntity<>(createdNote, HttpStatus.CREATED);
+    // NoteModel note = noteService.getNoteById(id);
+    // if (note == null) {
+    // return ResponseEntity.notFound().build();
+    // }
+    // return ResponseEntity.ok(note);
+
     // } catch (Exception e) {
-    // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    // System.out.println(e);
     // }
     // }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<NoteModel> updateNote(@PathVariable("id") long id, @RequestBody NoteModel note) {
-        Optional<NoteModel> noteData = noteRepository.findById(id);
-
-        if (noteData.isPresent()) {
-            NoteModel existingNote = noteData.get();
-            existingNote.setTitle(note.getTitle());
-            existingNote.setContent(note.getContent());
-            return new ResponseEntity<>(noteRepository.save(existingNote), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteNoteById(@PathVariable("id") long id) {
-        try {
-            noteRepository.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @DeleteMapping()
-    public ResponseEntity<HttpStatus> deleteAllNotes() {
-        try {
-            noteRepository.deleteAll();
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    // @GetMapping("/published")
-    // public List<NoteModel> getAllPublishedNotes() {
+    // @PutMapping("/{id}")
+    // public ResponseEntity<NoteModel> updateNote(@PathVariable("id") long id,
+    // @RequestBody NoteModel note) {
     // try {
-    // List<NoteModel> publishedNotes = noteRepository.findByPublished(true);
+    // NoteModel updatedNote = noteService.updateNote(id, note);
+    // if (updatedNote == null) {
+    // return ResponseEntity.notFound().build();
+    // }
+    // return ResponseEntity.ok(updatedNote);
 
-    // if (publishedNotes.isEmpty()) {
+    // } catch (Exception e) {
+    // System.out.println(e);
+    // }
+    // }
+
+    // @DeleteMapping("/{id}")
+    // public ResponseEntity<Void> deleteNoteById(@PathVariable("id") long id) {
+    // try {
+    // noteService.deleteNoteById(id);
     // return ResponseEntity.noContent().build();
-    // } else {
-    // return ResponseEntity.ok(publishedNotes);
-    // }
     // } catch (Exception e) {
-    // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    // System.out.println(e);
+    // }
+    // }
+
+    // @DeleteMapping()
+    // public ResponseEntity<Void> deleteAllNotes() {
+    // try {
+    // noteService.deleteAllNotes();
+    // return ResponseEntity.noContent().build();
+
+    // } catch (Exception e) {
+    // System.out.println(e);
     // }
     // }
 }
