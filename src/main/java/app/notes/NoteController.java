@@ -8,7 +8,7 @@ import app.notes.dto.CreateNoteDto;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/notes")
+@RequestMapping("/notes")
 public class NoteController {
 
     @Autowired
@@ -41,7 +41,7 @@ public class NoteController {
     public ResponseEntity<ResponseEntity<NoteModel>> getNoteById(@PathVariable("id") String id) {
         try {
             ResponseEntity<NoteModel> note = noteService.getNoteById(id);
-            return ResponseEntity.ok(note);
+            return ResponseEntity.ok().body(note);
 
         } catch (Exception e) {
             System.out.println(e);

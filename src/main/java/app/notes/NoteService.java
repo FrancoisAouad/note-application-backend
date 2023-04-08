@@ -15,6 +15,10 @@ public class NoteService {
     @Autowired
     private NoteRepository noteRepository;
 
+    /**
+     * @function getAllNotes - Method to return list of notes
+     * @return
+     */
     public ResponseEntity<List<NoteModel>> getAllNotes() {
         List<NoteModel> noteModels = noteRepository.findAll();
         if (noteModels.isEmpty()) {
@@ -24,6 +28,11 @@ public class NoteService {
         }
     }
 
+    /**
+     * @function createNote - Method to create a single note
+     * @param noteDto - Fields needed to create a note
+     * @return
+     */
     public ResponseEntity<NoteModel> createNote(CreateNoteDto noteDto) {
         NoteModel newNote = NoteModel.builder().id(generateUUID()).title(noteDto.getTitle())
                 .content(noteDto.getContent())
@@ -33,6 +42,10 @@ public class NoteService {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedNoteModel);
     }
 
+    /**
+     * @function generateUUID - Helper method to generate a unique id for each note
+     * @return
+     */
     public static String generateUUID() {
         UUID uuid = UUID.randomUUID();
         String uuidString = uuid.toString();
@@ -41,9 +54,15 @@ public class NoteService {
         return formattedUUID;
     }
 
+    /**
+     * @function getNoteById - Method to get a single note by its id
+     * @param id - uuid if the note
+     * @return
+     */
     public ResponseEntity<NoteModel> getNoteById(String id) {
         NoteModel note = noteRepository.getNoteById(id);
-        return ResponseEntity.ok().body(note);
+        return ResponseEntity.ok(note);
+
     }
 
 }
