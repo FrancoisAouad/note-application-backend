@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/note-application
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: '000000'
+      SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_LOB_NON_CONTEXTUAL_CREATION: 'true'
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      SPRING_JPA_HIBERNATE_DDL-AUTO: update
+      SERVER_SERVLET_CONTEXT_PATH: /api
+      SERVER_PORT: 9000
+    ports:
+      - 9000:9000
+    depends_on:
+      - db
+
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: note-application
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 000000
+    ports:
+      - 5432:5432
