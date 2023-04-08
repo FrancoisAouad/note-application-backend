@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.Date;
 import javax.persistence.*;
+import app.categories.CategoryModel;
 
 @Entity
 @Table(name = "notes")
@@ -23,14 +24,16 @@ public class NoteModel {
     @Column(name = "content")
     private String content;
 
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private CategoryModel category;
+
     @Column(name = "creator_name")
     private String creatorName;
 
     @Column(name = "creator_email")
     private String creatorEmail;
 
-    // @Column(name = "created_date", nullable = false)
-    // private Date createdDate;
     @Column(name = "created_date", nullable = false)
     private Date createdDate;
 
@@ -49,10 +52,6 @@ public class NoteModel {
     // @ElementCollection
     // @Column(name = "attachment_location")
     // private List<String> attachmentLocation;
-
-    // @ManyToOne
-    // @JoinColumn(name = "category_id", nullable = false)
-    // private CategoryModel category;
 
     // @ManyToOne
     // @JoinColumn(name = "creator_id", nullable = false)

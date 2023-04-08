@@ -14,12 +14,17 @@ import org.slf4j.LoggerFactory;
 import app.notes.dto.CreateNoteDto;
 import app.notes.dto.UpdateNoteDto;
 import app.utils.GlobalService;
+import app.categories.CategoryModel;
+import app.categories.CategoryService;
 
 @Service
 public class NoteService {
 
     @Autowired
     private NoteRepository noteRepository;
+    @Autowired
+    private CategoryService categoryService;
+    // @Autowired
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
@@ -47,9 +52,22 @@ public class NoteService {
                 .id(GlobalService.generateUUID())
                 .title(noteDto.getTitle())
                 .content(noteDto.getContent())
+                // .categoryId(noteDto.getCategoryId())
                 .createdDate(new Date())
                 .updatedDate(new Date())
                 .build();
+
+        if (!noteDto.getCategoryId().isEmpty()) {
+            logger.debug("categoryService"
+                    + categoryService);
+            CategoryModel category = categoryService.getPrimaryKeyValue(noteDto.getCategoryId());
+            logger.debug("category is: " + category);
+            if (category == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+            newNote.setCategory(category);
+            logger.debug("" + newNote);
+        }
         try {
             NoteModel savedNoteModel = noteRepository.save(newNote);
             logger.info("Successfully created a new note");

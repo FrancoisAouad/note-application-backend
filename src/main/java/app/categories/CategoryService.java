@@ -79,4 +79,8 @@ public class CategoryService {
         return ResponseEntity.ok(category);
     }
 
+    public CategoryModel getPrimaryKeyValue(String id) {
+        return categoryRepository.findById(id);
+    }
+
 }

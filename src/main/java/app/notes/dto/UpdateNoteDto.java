@@ -13,5 +13,6 @@ import lombok.NoArgsConstructor;
 public class UpdateNoteDto {
     private String title;
     private String content;
+    private String categoryId;
 
 }

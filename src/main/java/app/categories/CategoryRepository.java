@@ -6,4 +6,6 @@ public interface CategoryRepository extends JpaRepository<CategoryModel, Long> {
 
     CategoryModel getCategoryById(String id);
 
+    CategoryModel findById(String id);
+
 }
