@@ -84,7 +84,7 @@ public class NoteService {
      * @return
      */
     public ResponseEntity<NoteModel> getById(String id) {
-        NoteModel note = noteRepository.getNoteById(id);
+        NoteModel note = noteRepository.findById(id);
         if (note == null) {
             logger.info("Failed to retrieve requested note");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -101,7 +101,7 @@ public class NoteService {
      * @return ResponseEntity<NoteModel>
      */
     public ResponseEntity<NoteModel> update(String id, UpdateNoteDto noteDto) {
-        NoteModel note = noteRepository.getNoteById(id);
+        NoteModel note = noteRepository.findById(id);
         if (note == null) {
             logger.warn("Failed to find the requested note to update");
             return ResponseEntity.notFound().build();

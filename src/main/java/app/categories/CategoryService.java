@@ -54,7 +54,7 @@ public class CategoryService {
      * @return
      */
     public ResponseEntity<CategoryModel> getById(String id) {
-        CategoryModel category = categoryRepository.getCategoryById(id);
+        CategoryModel category = categoryRepository.findById(id);
         if (category == null) {
             return ResponseEntity.notFound().build();
         }
@@ -68,7 +68,7 @@ public class CategoryService {
      * @return ResponseEntity<CategoryModel>
      */
     public ResponseEntity<CategoryModel> update(String id, UpdateCategoryDto categoryDto) {
-        CategoryModel category = categoryRepository.getCategoryById(id);
+        CategoryModel category = categoryRepository.findById(id);
         if (category == null) {
             return ResponseEntity.notFound().build();
         }

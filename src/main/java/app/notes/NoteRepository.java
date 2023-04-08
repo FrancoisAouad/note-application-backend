@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface NoteRepository extends JpaRepository<NoteModel, Long> {
 
-    NoteModel getNoteById(String id);
+    NoteModel findById(String id);
 
     List<NoteModel> findByTitleContaining(String title);
 }
