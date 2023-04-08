@@ -1,4 +1,4 @@
-package app.categories.dto;
+package app.notes.dto;
 
 // Lombok
 import lombok.AllArgsConstructor;
@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class CreateCategoryDto {
-
-    private String categoryName;
+public class UpdateNoteDto {
+    private String title;
+    private String content;
 
 }

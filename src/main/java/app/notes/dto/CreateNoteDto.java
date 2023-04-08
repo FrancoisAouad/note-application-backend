@@ -1,5 +1,6 @@
 package app.notes.dto;
 
+// Lombok
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

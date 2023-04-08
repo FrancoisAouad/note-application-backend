@@ -1,13 +1,17 @@
 package app.notes;
 
+// Spring
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import app.notes.dto.CreateNoteDto;
+// Utils
 import java.util.Date;
-import app.utils.GlobalService;
 import java.util.List;
+// Services
+import app.notes.dto.CreateNoteDto;
+import app.notes.dto.UpdateNoteDto;
+import app.utils.GlobalService;
 
 @Service
 public class NoteService {
@@ -52,8 +56,32 @@ public class NoteService {
      */
     public ResponseEntity<NoteModel> getById(String id) {
         NoteModel note = noteRepository.getNoteById(id);
+        if (note == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
         return ResponseEntity.ok(note);
 
+    }
+
+    /**
+     * @function update
+     * @param id
+     * @param noteDto
+     * @return ResponseEntity<NoteModel>
+     */
+    public ResponseEntity<NoteModel> update(String id, UpdateNoteDto noteDto) {
+        NoteModel note = noteRepository.getNoteById(id);
+        if (note == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (noteDto.getTitle() != null) {
+            note.setTitle(noteDto.getTitle());
+        }
+        if (noteDto.getContent() != null) {
+            note.setContent(noteDto.getContent());
+        }
+        note.setUpdatedDate(new Date());
+        return ResponseEntity.ok(note);
     }
 
 }

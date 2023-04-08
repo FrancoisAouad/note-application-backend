@@ -1,11 +1,14 @@
 package app.notes;
 
+// Spring
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import app.notes.dto.CreateNoteDto;
+// Utils
 import java.util.List;
+// Services
+import app.notes.dto.CreateNoteDto;
+import app.notes.dto.UpdateNoteDto;
 
 @RestController
 @RequestMapping("/notes")
@@ -16,52 +19,23 @@ public class NoteController {
 
     @GetMapping()
     public ResponseEntity<List<NoteModel>> getAll() {
-        try {
-            ResponseEntity<List<NoteModel>> result = noteService.getAll();
-            return result;
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-
+        return noteService.getAll();
     }
 
     @PostMapping()
     public ResponseEntity<NoteModel> create(@RequestBody CreateNoteDto note) {
-        try {
-            ResponseEntity<NoteModel> result = noteService.create(note);
-            return ResponseEntity.status(HttpStatus.CREATED).body(result.getBody());
-        } catch (Exception e) {
-            System.out.println(e);
-            return ResponseEntity.notFound().build();
-        }
+        return noteService.create(note);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<NoteModel> getById(@PathVariable("id") String id) {
-        try {
-            ResponseEntity<NoteModel> result = noteService.getById(id);
-            return result;
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        return null;
+        return noteService.getById(id);
     }
 
-    // @PutMapping("/{id}")
-    // public ResponseEntity<NoteModel> updateNote(@PathVariable("id") long id,
-    // @RequestBody NoteModel note) {
-    // try {
-    // NoteModel updatedNote = noteService.updateNote(id, note);
-    // if (updatedNote == null) {
-    // return ResponseEntity.notFound().build();
-    // }
-    // return ResponseEntity.ok(updatedNote);
-
-    // } catch (Exception e) {
-    // System.out.println(e);
-    // }
-    // }
+    @PatchMapping("/{id}")
+    public ResponseEntity<NoteModel> update(@PathVariable("id") String id, @RequestBody UpdateNoteDto note) {
+        return noteService.update(id, note);
+    }
 
     // @DeleteMapping("/{id}")
     // public ResponseEntity<Void> deleteNoteById(@PathVariable("id") long id) {

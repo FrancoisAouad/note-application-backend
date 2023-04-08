@@ -1,13 +1,17 @@
 package app.categories;
 
+// Spring
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import app.categories.dto.CreateCategoryDto;
-import app.utils.GlobalService;
+// Utils
 import java.util.Date;
 import java.util.List;
+// Services
+import app.categories.dto.CreateCategoryDto;
+import app.categories.dto.UpdateCategoryDto;
+import app.utils.GlobalService;
 
 @Service
 public class CategoryService {
@@ -51,6 +55,27 @@ public class CategoryService {
      */
     public ResponseEntity<CategoryModel> getById(String id) {
         CategoryModel category = categoryRepository.getCategoryById(id);
+        if (category == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(category);
+    }
+
+    /**
+     * @function update
+     * @param id
+     * @param categoryDto
+     * @return ResponseEntity<CategoryModel>
+     */
+    public ResponseEntity<CategoryModel> update(String id, UpdateCategoryDto categoryDto) {
+        CategoryModel category = categoryRepository.getCategoryById(id);
+        if (category == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (categoryDto.getCategoryName() != null) {
+            category.setCategoryName(categoryDto.getCategoryName());
+        }
+        category.setUpdatedDate(new Date());
         return ResponseEntity.ok(category);
     }
 

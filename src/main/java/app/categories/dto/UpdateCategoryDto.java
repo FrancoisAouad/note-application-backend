@@ -10,8 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class CreateCategoryDto {
-
+public class UpdateCategoryDto {
     private String categoryName;
 
 }

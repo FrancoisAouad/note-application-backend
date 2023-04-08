@@ -1,8 +1,10 @@
 package app.categories;
 
+// Javax
 import javax.persistence.Entity;
 import java.util.Date;
 import javax.persistence.*;
+// Lombok
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
