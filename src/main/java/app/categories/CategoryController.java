@@ -13,6 +13,7 @@ import app.global.dto.DeleteSelectedDto;
 
 @RestController
 @RequestMapping("/categories")
+@CrossOrigin(origins = "*")
 public class CategoryController {
 
     @Autowired

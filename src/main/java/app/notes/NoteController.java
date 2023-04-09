@@ -13,6 +13,7 @@ import app.notes.dto.UpdateNoteDto;
 
 @RestController
 @RequestMapping("/notes")
+@CrossOrigin(origins = "*")
 public class NoteController {
 
     @Autowired

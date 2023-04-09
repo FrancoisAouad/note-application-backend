@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+// Services
+import app.auth.AuthModel;
 
 @Entity
 @Table(name = "categories")
@@ -29,9 +31,9 @@ public class CategoryModel {
     @Column(name = "updated_date", nullable = false)
     private Date updatedDate;
 
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "creator_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creator_id", nullable = false)
     // @JsonIgnore
-    // private User creator;
+    private AuthModel creator;
 
 }
