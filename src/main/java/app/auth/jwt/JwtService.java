@@ -54,18 +54,15 @@ public class JwtService {
                 jwtProperties.put("token_expiry", tokenExp);
             }
         }
-        System.out.println("MAP" + jwtProperties);
         return generateTokenFromUsername(jwtProperties.get("id"), jwtProperties.get("token_secret"), jwtProperties.get("token_expiry"));
     }
 
     public String generateTokenFromUsername(String username, String token, String expiryDate) {
 
-        String result = Jwts.builder().setSubject(username).setIssuedAt(new Date())
+        return Jwts.builder().setSubject(username).setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + Integer.parseInt(expiryDate)))
                 .signWith(SignatureAlgorithm.HS512, token)
                 .compact();
-        System.out.println(result);
-        return result;
     }
 
     public String getUserNameFromJwtToken(String token) {

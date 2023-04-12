@@ -26,21 +26,9 @@ public class AuthService {
     private JwtService jwtService;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public AuthService() {
-    }
-
-    ;
-
     public ResponseEntity<?> register(RegisterUserDto user) {
-        logger.debug("BODY REQUEST: " + user);
-        if (authRepository.existsByUsername(user.getUsername())) {
-            // make a custom Auth exception class that will throw messages related to this
-            // service
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
-        }
-
-        if (authRepository.existsByEmail(user.getEmail())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AuthModel());
+        if (authRepository.existsByUsername(user.getUsername()) || authRepository.existsByEmail(user.getEmail())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HttpException(409, "User already exists"));
         }
         AuthModel userModel = AuthModel.builder()
                 .firstName(user.getFirstName())
@@ -62,32 +50,23 @@ public class AuthService {
         String refreshToken = jwtService.generateJwtToken(userModel, JWT_TYPE.REFRESH_TOKEN);
         String emailToken = jwtService.generateJwtToken(userModel, JWT_TYPE.EMAIL_TOKEN);
         savedUser.setEmailToken(emailToken);
-        logger.debug("savedUser" + savedUser);
-        logger.debug("access:" + accessToken);
-        logger.debug("refresh:" + refreshToken);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(new Tokens(accessToken, refreshToken));
 
     }
 
-    public ResponseEntity<?> login(LoginDto login) {
-        String plainPassword = login.getPassword();
-        String username = login.getUsername();
+    public ResponseEntity<?> login(LoginDto loginDto) {
+        String plainPassword = loginDto.getPassword();
+        String username = loginDto.getUsername();
         AuthModel userModel = authRepository.findByUsername(username);
-//        if(userModel==null){
-//            System.out.println(passwordEncoder.encode(plainPassword));
-//            return ResponseEntity.ok().body(null);
-//        }
-        String savedPassword = userModel.getPassword();
-// PasswordEncoder passwordEncoder = new PasswordEncoder();
-//        if (passwordEncoder.matches(plainPassword, savedPassword)) {
-//            System.out.println("yeessssssss");
-//            String token = jwtService.generateJwtToken(userModel);
-//            return ResponseEntity.ok().body(token);
-//        }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new HttpException(401, "Invalid username/password"));
-
+        if (userModel == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new HttpException(404, "User not found"));
+        }
+        if (!userModel.getPassword().equals(plainPassword)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new HttpException(401, "Invalid username/password"));
+        }
+        String accessToken = jwtService.generateJwtToken(userModel, JWT_TYPE.ACCESS_TOKEN);
+        String refreshToken = jwtService.generateJwtToken(userModel, JWT_TYPE.REFRESH_TOKEN);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new Tokens(accessToken, refreshToken));
     }
 
     public void refreshToken() {
