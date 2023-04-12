@@ -1,6 +1,7 @@
 package app.auth;
 
 // Spring
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -11,8 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+// Services
 import app.auth.dto.RegisterUserDto;
+import app.global.dto.LoginDto;
 import app.global.HttpException;
 
 @RestController
@@ -34,8 +36,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public void login() {
-        // return authService.create(category);
+    public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
+        ResponseEntity<?> result = authService.login(loginDto);
+        return HttpException.handleResponse(result.getStatusCodeValue(), result.getBody());
     }
 
     @PostMapping("/refresh-token")
