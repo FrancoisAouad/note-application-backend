@@ -10,7 +10,7 @@ import lombok.Data;
 @Builder
 @Data
 @AllArgsConstructor
-public class HttpException  {
+public class HttpException implements HttpExceptionInterface {
     private int statusCode;
     private String message;
 

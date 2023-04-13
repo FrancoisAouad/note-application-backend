@@ -67,9 +67,16 @@ public class UserService {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new HttpException(401, "Invalid username/password"));
         }
-        String accessToken = jwtService.generateJwtToken(userModel, JWT_TYPE.ACCESS_TOKEN);
-        String refreshToken = jwtService.generateJwtToken(userModel, JWT_TYPE.REFRESH_TOKEN);
-        return ResponseEntity.status(HttpStatus.OK).body(new Tokens(accessToken, refreshToken));
+        try {
+            String accessToken = jwtService.generateJwtToken(userModel, JWT_TYPE.ACCESS_TOKEN);
+            String refreshToken = jwtService.generateJwtToken(userModel, JWT_TYPE.REFRESH_TOKEN);
+            return ResponseEntity.status(HttpStatus.OK).body(new Tokens(accessToken, refreshToken));
+
+        } catch (Exception e) {
+            logger.error("Failed to login user with the following credentials: Username: '" + username
+                    + "'. Password: '" + plainPassword + "'.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HttpException(400, "Invalid tokens"));
+        }
     }
 
     public void refreshToken() {

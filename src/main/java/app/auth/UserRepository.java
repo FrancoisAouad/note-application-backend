@@ -1,8 +1,7 @@
 package app.auth;
 
+import app.global.ThrowableHttpException;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import app.global.HttpException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +17,10 @@ public interface UserRepository extends JpaRepository<UserModel, Long> {
 
     Boolean existsByEmail(String email);
 
-    default String getUserHashedPassword(long id)  {
+    default String getUserHashedPassword(long id) throws ThrowableHttpException {
         UserModel user = findById(id);
         if (user == null) {
-//            throw new HttpException(404, "User Not Found");
-            return "";
+            throw new ThrowableHttpException(404, "User Not Found");
         }
         return user.getPassword();
     };
