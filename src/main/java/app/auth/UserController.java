@@ -26,12 +26,8 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterUserDto user) {
-
         ResponseEntity<?> result = userService.register(user);
-        if (result.getStatusCodeValue() == 400) {
-            return ResponseEntity.badRequest().body(new HttpException(400, "Validation Error"));
-        }
-        return result;
+        return HttpException.handleResponse(result.getStatusCodeValue(), result.getBody());
     }
 
     @PostMapping("/login")

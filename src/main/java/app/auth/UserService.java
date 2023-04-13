@@ -29,7 +29,7 @@ public class UserService {
 
     public ResponseEntity<?> register(RegisterUserDto user) {
         if (userRepository.existsByUsername(user.getUsername()) || userRepository.existsByEmail(user.getEmail())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HttpException(409, "User already exists"));
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new HttpException(409, "User already exists"));
         }
         UserModel userModel = UserModel.builder()
                 .firstName(user.getFirstName())

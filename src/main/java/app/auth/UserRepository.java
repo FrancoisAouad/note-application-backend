@@ -18,10 +18,11 @@ public interface UserRepository extends JpaRepository<UserModel, Long> {
 
     Boolean existsByEmail(String email);
 
-    default String getUserHashedPassword(long id) throws HttpException {
+    default String getUserHashedPassword(long id)  {
         UserModel user = findById(id);
         if (user == null) {
-            throw new HttpException(404, "User Not Found");
+//            throw new HttpException(404, "User Not Found");
+            return "";
         }
         return user.getPassword();
     };
