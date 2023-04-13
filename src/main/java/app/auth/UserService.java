@@ -2,6 +2,7 @@ package app.auth;
 
 import java.util.Date;
 
+import app.auth.dto.Tokens;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,26 +12,26 @@ import org.springframework.stereotype.Service;
 import app.auth.dto.RegisterUserDto;
 import app.auth.jwt.JwtService;
 import app.global.HttpException;
-import app.global.dto.LoginDto;
+import app.auth.dto.LoginDto;
 import org.slf4j.Logger;
 import app.auth.jwt.JWT_TYPE;
 import org.slf4j.LoggerFactory;
 // import app.global.Roles;
 
 @Service
-public class AuthService {
+public class UserService {
     @Autowired
-    private AuthRepository authRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private JwtService jwtService;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public ResponseEntity<?> register(RegisterUserDto user) {
-        if (authRepository.existsByUsername(user.getUsername()) || authRepository.existsByEmail(user.getEmail())) {
+        if (userRepository.existsByUsername(user.getUsername()) || userRepository.existsByEmail(user.getEmail())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HttpException(409, "User already exists"));
         }
-        AuthModel userModel = AuthModel.builder()
+        UserModel userModel = UserModel.builder()
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .username(user.getUsername())
@@ -42,34 +43,37 @@ public class AuthService {
                 .updatedDate(new Date())
                 .build();
         logger.debug("model for users" + userModel);
-        AuthModel savedUser = authRepository.save(userModel);
+        UserModel savedUser = userRepository.save(userModel);
         if (savedUser.getId() == null) {
             return ResponseEntity.badRequest().body("Validation error");
         }
-        String accessToken = jwtService.generateJwtToken(userModel, JWT_TYPE.ACCESS_TOKEN);
-        String refreshToken = jwtService.generateJwtToken(userModel, JWT_TYPE.REFRESH_TOKEN);
-        String emailToken = jwtService.generateJwtToken(userModel, JWT_TYPE.EMAIL_TOKEN);
-        savedUser.setEmailToken(emailToken);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new Tokens(accessToken, refreshToken));
+        try {
+            String accessToken = jwtService.generateJwtToken(userModel, JWT_TYPE.ACCESS_TOKEN);
+            String refreshToken = jwtService.generateJwtToken(userModel, JWT_TYPE.REFRESH_TOKEN);
+            String emailToken = jwtService.generateJwtToken(userModel, JWT_TYPE.EMAIL_TOKEN);
+            savedUser.setEmailToken(emailToken);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new Tokens(accessToken, refreshToken));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HttpException(400, "Invalid tokens"));
+        }
 
     }
 
     public ResponseEntity<?> login(LoginDto loginDto) {
         String plainPassword = loginDto.getPassword();
         String username = loginDto.getUsername();
-        AuthModel userModel = authRepository.findByUsername(username);
-        if (userModel == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new HttpException(404, "User not found"));
-        }
-        if (!userModel.getPassword().equals(plainPassword)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new HttpException(401, "Invalid username/password"));
+        UserModel userModel = userRepository.findByUsername(username);
+        if (userModel == null || !userModel.getPassword().equals(plainPassword)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new HttpException(401, "Invalid username/password"));
         }
         String accessToken = jwtService.generateJwtToken(userModel, JWT_TYPE.ACCESS_TOKEN);
         String refreshToken = jwtService.generateJwtToken(userModel, JWT_TYPE.REFRESH_TOKEN);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new Tokens(accessToken, refreshToken));
+        return ResponseEntity.status(HttpStatus.OK).body(new Tokens(accessToken, refreshToken));
     }
 
     public void refreshToken() {
+
     }
 
     public void logout() {

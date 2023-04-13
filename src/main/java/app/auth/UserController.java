@@ -14,21 +14,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 // Services
 import app.auth.dto.RegisterUserDto;
-import app.global.dto.LoginDto;
+import app.auth.dto.LoginDto;
 import app.global.HttpException;
 
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin(origins = "*")
-public class AuthController {
+public class UserController {
     @Autowired
-    private AuthService authService;
+    private UserService userService;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterUserDto user) {
 
-        ResponseEntity<?> result = authService.register(user);
-        System.out.println("RESULT IS " + result);
+        ResponseEntity<?> result = userService.register(user);
         if (result.getStatusCodeValue() == 400) {
             return ResponseEntity.badRequest().body(new HttpException(400, "Validation Error"));
         }
@@ -37,7 +36,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
-        ResponseEntity<?> result = authService.login(loginDto);
+        ResponseEntity<?> result = userService.login(loginDto);
         return HttpException.handleResponse(result.getStatusCodeValue(), result.getBody());
     }
 

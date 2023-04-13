@@ -14,8 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.jsonwebtoken.*;
 // Services
-import app.auth.AuthModel;
-
+import app.auth.UserModel;
 
 @Service
 public class JwtService {
@@ -34,27 +33,30 @@ public class JwtService {
     @Value("${app.jwtEmailTokenExp}")
     private int jwtEmailTokenExp;
 
-    public String generateJwtToken(AuthModel user, JWT_TYPE type) {
-        Map<String, String> jwtProperties = new HashMap<>();
-        jwtProperties.put("id", user.getUsername());
+    public String generateJwtToken(UserModel user, JWT_TYPE type) {
+        String tokenExp;
+        String tokenSecret;
         switch (type) {
             case ACCESS_TOKEN -> {
-                final String tokenExp = jwtAccessTokenExp + "";
-                jwtProperties.put("token_secret", jwtAccessTokenSecret);
-                jwtProperties.put("token_expiry", tokenExp);
+                tokenExp = jwtAccessTokenExp + "";
+                tokenSecret = jwtAccessTokenSecret;
             }
             case REFRESH_TOKEN -> {
-                final String tokenExp = jwtRefreshTokenExp + "";
-                jwtProperties.put("token_secret", jwtRefreshTokenSecret);
-                jwtProperties.put("token_expiry", tokenExp);
+                tokenExp = jwtRefreshTokenExp + "";
+                tokenSecret = jwtRefreshTokenSecret;
             }
             case EMAIL_TOKEN -> {
-                final String tokenExp = jwtEmailTokenExp + "";
-                jwtProperties.put("token_secret", jwtEmailTokenSecret);
-                jwtProperties.put("token_expiry", tokenExp);
+                tokenExp = jwtEmailTokenExp + "";
+                tokenSecret = jwtEmailTokenSecret;
             }
+            default -> throw new IllegalArgumentException("Invalid JWT_TYPE value");
         }
-        return generateTokenFromUsername(jwtProperties.get("id"), jwtProperties.get("token_secret"), jwtProperties.get("token_expiry"));
+        Map<String, String> jwtProperties = new HashMap<>();
+        jwtProperties.put("id", user.getUsername());
+        jwtProperties.put("token_secret", tokenSecret);
+        jwtProperties.put("token_expiry", tokenExp);
+        return generateTokenFromUsername(jwtProperties.get("id"), jwtProperties.get("token_secret"),
+                jwtProperties.get("token_expiry"));
     }
 
     public String generateTokenFromUsername(String username, String token, String expiryDate) {
