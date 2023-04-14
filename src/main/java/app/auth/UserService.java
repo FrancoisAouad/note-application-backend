@@ -70,6 +70,7 @@ public class UserService {
         try {
             String accessToken = jwtService.generateJwtToken(userModel, JWT_TYPE.ACCESS_TOKEN);
             String refreshToken = jwtService.generateJwtToken(userModel, JWT_TYPE.REFRESH_TOKEN);
+            logger.info("User login is success " + accessToken + " refresh " + refreshToken);
             return ResponseEntity.status(HttpStatus.OK).body(new Tokens(accessToken, refreshToken));
 
         } catch (Exception e) {
