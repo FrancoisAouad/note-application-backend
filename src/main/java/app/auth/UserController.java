@@ -26,7 +26,9 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterUserDto user) {
+        System.out.println("USER REQUST " + user);
         ResponseEntity<?> result = userService.register(user);
+        System.out.println("RESULT:" + result);
         return HttpException.handleResponse(result.getStatusCodeValue(), result.getBody());
     }
 

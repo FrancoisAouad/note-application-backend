@@ -23,6 +23,6 @@ public class RefreshTokenModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "refresh_token_value", nullable = false)
+    @Column(name = "refresh_token_value")
     private String refreshTokenValue;
 }

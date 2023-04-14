@@ -37,8 +37,6 @@ public class RegisterUserDto {
     @Size(min = 8, max = 120)
     private String confirmPassword;
 
-    private boolean isAdmin;
-
     @AssertTrue(message = "Passwords do not match")
     private boolean isPasswordMatching() {
         return password.equals(confirmPassword);

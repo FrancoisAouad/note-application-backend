@@ -23,11 +23,11 @@ public class TokenModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "access_token_id", nullable = false)
-    private String accessToken;
-    @Column(name = "refresh_token_id", nullable = false)
-    private String refreshToken;
-    @Column(name = "user_id", nullable = false)
-    private String userId;
+    @Column(name = "access_token_id")
+    private Long accessToken;
+    @Column(name = "refresh_token_id")
+    private Long refreshToken;
+    @Column(name = "user_id")
+    private Long userId;
 
 }

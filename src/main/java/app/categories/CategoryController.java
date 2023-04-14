@@ -1,6 +1,7 @@
 package app.categories;
 
 // Spring 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,8 +42,7 @@ public class CategoryController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<CategoryModel> update(@PathVariable("id") String id,
-            @RequestBody UpdateCategoryDto category) {
+    public ResponseEntity<CategoryModel> update(@PathVariable("id") String id, @RequestBody UpdateCategoryDto category) {
         return categoryService.update(id, category);
     }
 

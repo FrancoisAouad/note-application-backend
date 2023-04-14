@@ -3,12 +3,12 @@ package app.auth;
 import java.util.Date;
 
 import app.auth.dto.Tokens;
-import org.springframework.beans.factory.annotation.Autowired;
+import app.auth.jwt.TokenRepository;
+import app.auth.jwt.accessTokens.AccessTokenRepository;
+import app.auth.jwt.refreshTokens.RefreshTokenRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-//import org.springframework.security.crypto.password.PasswordEncoder;
-// import org.springframework.web.bind.annotation.RequestBody;
 import app.auth.dto.RegisterUserDto;
 import app.auth.jwt.JwtService;
 import app.global.HttpException;
@@ -16,16 +16,20 @@ import app.auth.dto.LoginDto;
 import org.slf4j.Logger;
 import app.auth.jwt.JWT_TYPE;
 import org.slf4j.LoggerFactory;
-// import app.global.Roles;
+import app.auth.jwt.TokenModel;
+import app.auth.jwt.accessTokens.AccessTokenModel;
+import app.auth.jwt.refreshTokens.RefreshTokenModel;
 
 @Service
 public class UserService {
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
     private JwtService jwtService;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    public UserService(UserRepository userRepository, JwtService jwtService) {
+        this.userRepository = userRepository;
+        this.jwtService = jwtService;
+    }
 
     public ResponseEntity<?> register(RegisterUserDto user) {
         if (userRepository.existsByUsername(user.getUsername()) || userRepository.existsByEmail(user.getEmail())) {
@@ -48,11 +52,8 @@ public class UserService {
             return ResponseEntity.badRequest().body("Validation error");
         }
         try {
-            String accessToken = jwtService.generateJwtToken(userModel, JWT_TYPE.ACCESS_TOKEN);
-            String refreshToken = jwtService.generateJwtToken(userModel, JWT_TYPE.REFRESH_TOKEN);
-            String emailToken = jwtService.generateJwtToken(userModel, JWT_TYPE.EMAIL_TOKEN);
-            savedUser.setEmailToken(emailToken);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new Tokens(accessToken, refreshToken));
+              Tokens tokens = jwtService.saveTokens(userModel, true);
+            return ResponseEntity.status(HttpStatus.CREATED).body(tokens);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HttpException(400, "Invalid tokens"));
         }
@@ -68,10 +69,9 @@ public class UserService {
                     .body(new HttpException(401, "Invalid username/password"));
         }
         try {
-            String accessToken = jwtService.generateJwtToken(userModel, JWT_TYPE.ACCESS_TOKEN);
-            String refreshToken = jwtService.generateJwtToken(userModel, JWT_TYPE.REFRESH_TOKEN);
-            logger.info("User login is success " + accessToken + " refresh " + refreshToken);
-            return ResponseEntity.status(HttpStatus.OK).body(new Tokens(accessToken, refreshToken));
+            Tokens tokens = jwtService.saveTokens(userModel, false);
+            logger.info("User login is success " + tokens.accessToken + " refresh " + tokens.refreshToken);
+            return ResponseEntity.status(HttpStatus.OK).body(tokens);
 
         } catch (Exception e) {
             logger.error("Failed to login user with the following credentials: Username: '" + username

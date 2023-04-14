@@ -23,6 +23,6 @@ public class AccessTokenModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "access_token_value", nullable = false)
+    @Column(name = "access_token_value")
     private String accessTokenValue;
 }
