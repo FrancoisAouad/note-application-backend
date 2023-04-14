@@ -1,4 +1,4 @@
-package app.global.dto;
+package app.auth.dto;
 
 import java.util.List;
 

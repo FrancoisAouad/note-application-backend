@@ -10,29 +10,22 @@ import lombok.Data;
 @Builder
 @Data
 @AllArgsConstructor
-public class HttpException extends Throwable {
+public class HttpException implements HttpExceptionInterface {
     private int statusCode;
     private String message;
 
     public static ResponseEntity<?> handleResponse(int statusCodeValue, Object message) {
+        return switch (statusCodeValue) {
+            case 200 -> ResponseEntity.ok().body(message);
+            case 201 -> ResponseEntity.status(HttpStatus.CREATED).body(message);
+            case 204 -> ResponseEntity.status(HttpStatus.NO_CONTENT).body(message);
+            case 400 -> ResponseEntity.badRequest().body(message);
+            case 401 -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(message);
+            case 403 -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(message);
+            case 404 -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+            case 409 -> ResponseEntity.status(HttpStatus.CONFLICT).body(message);
+            default -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        };
 
-        switch (statusCodeValue) {
-            case 200:
-                return ResponseEntity.ok().body(message);
-            case 201:
-                return ResponseEntity.status(HttpStatus.CREATED).body(message);
-            case 204:
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(message);
-            case 400:
-                return ResponseEntity.badRequest().body(message);
-            case 401:
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(message);
-            case 403:
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(message);
-            case 404:
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
-        }
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
 }
