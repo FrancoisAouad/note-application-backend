@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 // Services
 import app.auth.dto.RegisterUserDto;
 import app.auth.dto.LoginDto;
-import app.global.HttpException;
+import app.global.exceptions.HttpException;
 
 @RestController
 @RequestMapping("/auth")

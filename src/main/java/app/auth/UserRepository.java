@@ -1,6 +1,6 @@
 package app.auth;
 
-import app.global.ThrowableHttpException;
+import app.global.exceptions.ThrowableHttpException;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import org.slf4j.Logger;

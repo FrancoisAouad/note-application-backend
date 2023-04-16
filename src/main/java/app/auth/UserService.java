@@ -3,22 +3,15 @@ package app.auth;
 import java.util.Date;
 
 import app.auth.dto.Tokens;
-import app.auth.jwt.TokenRepository;
-import app.auth.jwt.accessTokens.AccessTokenRepository;
-import app.auth.jwt.refreshTokens.RefreshTokenRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import app.auth.dto.RegisterUserDto;
 import app.auth.jwt.JwtService;
-import app.global.HttpException;
+import app.global.exceptions.HttpException;
 import app.auth.dto.LoginDto;
 import org.slf4j.Logger;
-import app.auth.jwt.JWT_TYPE;
 import org.slf4j.LoggerFactory;
-import app.auth.jwt.TokenModel;
-import app.auth.jwt.accessTokens.AccessTokenModel;
-import app.auth.jwt.refreshTokens.RefreshTokenModel;
 
 @Service
 public class UserService {
@@ -49,10 +42,10 @@ public class UserService {
         logger.debug("model for users" + userModel);
         UserModel savedUser = userRepository.save(userModel);
         if (savedUser.getId() == null) {
-            return ResponseEntity.badRequest().body("Validation error");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation error");
         }
         try {
-              Tokens tokens = jwtService.saveTokens(userModel, true);
+            Tokens tokens = jwtService.saveTokens(userModel, true);
             return ResponseEntity.status(HttpStatus.CREATED).body(tokens);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HttpException(400, "Invalid tokens"));
@@ -70,12 +63,8 @@ public class UserService {
         }
         try {
             Tokens tokens = jwtService.saveTokens(userModel, false);
-            logger.info("User login is success " + tokens.accessToken + " refresh " + tokens.refreshToken);
             return ResponseEntity.status(HttpStatus.OK).body(tokens);
-
         } catch (Exception e) {
-            logger.error("Failed to login user with the following credentials: Username: '" + username
-                    + "'. Password: '" + plainPassword + "'.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HttpException(400, "Invalid tokens"));
         }
     }

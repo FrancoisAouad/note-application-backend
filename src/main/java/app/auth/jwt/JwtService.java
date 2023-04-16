@@ -2,7 +2,6 @@ package app.auth.jwt;
 
 // Spring
 
-import antlr.Token;
 import app.auth.dto.Tokens;
 import app.auth.jwt.accessTokens.AccessTokenModel;
 import app.auth.jwt.accessTokens.AccessTokenRepository;
@@ -29,7 +28,8 @@ public class JwtService {
     private TokenRepository tokenRepository;
     private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
-    public JwtService(AccessTokenRepository accessTokenRepository, RefreshTokenRepository refreshTokenRepository, TokenRepository tokenRepository) {
+    public JwtService(AccessTokenRepository accessTokenRepository, RefreshTokenRepository refreshTokenRepository,
+            TokenRepository tokenRepository) {
         this.accessTokenRepository = accessTokenRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.tokenRepository = tokenRepository;
@@ -107,13 +107,14 @@ public class JwtService {
     }
 
     /**
-     * @function saveTokens - Method that creates the tokens and saves them in their tables and sends them back as response
+     * @function saveTokens - Method that creates the tokens and saves them in their
+     *           tables and sends them back as response
      * @param userModel
      * @param mailToken
      * @returns Tokens - Object token that has the pair tokens
      */
     public Tokens saveTokens(UserModel userModel, Boolean mailToken) {
-        if (mailToken){
+        if (mailToken) {
             String emailToken = generateJwtToken(userModel, JWT_TYPE.EMAIL_TOKEN);
             userModel.setEmailToken(emailToken);
         }
@@ -123,7 +124,8 @@ public class JwtService {
         accessTokenRepository.save(accessTokenModel);
         RefreshTokenModel refreshTokenModel = RefreshTokenModel.builder().refreshTokenValue(refreshToken).build();
         refreshTokenRepository.save(refreshTokenModel);
-        TokenModel tokenModel = TokenModel.builder().accessToken(accessTokenModel.getId()).refreshToken(refreshTokenModel.getId()).build();
+        TokenModel tokenModel = TokenModel.builder().accessToken(accessTokenModel.getId())
+                .refreshToken(refreshTokenModel.getId()).build();
         tokenModel.setUserId(userModel.getId());
         tokenRepository.save(tokenModel);
         return new Tokens(accessToken, refreshToken);
