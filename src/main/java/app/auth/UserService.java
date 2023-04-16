@@ -11,6 +11,7 @@ import app.auth.jwt.JwtService;
 import app.global.exceptions.HttpException;
 import app.auth.dto.LoginDto;
 import org.slf4j.Logger;
+import app.utils.GlobalService;
 import org.slf4j.LoggerFactory;
 
 @Service
@@ -29,10 +30,11 @@ public class UserService {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(new HttpException(409, "User already exists"));
         }
         UserModel userModel = UserModel.builder()
+                .id(GlobalService.generateUUID())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .username(user.getUsername())
-                .email(user.getUsername())
+                .email(user.getEmail())
                 .password(user.getPassword())
                 .isVerified(false)
                 .isAdmin(false)
@@ -40,12 +42,12 @@ public class UserService {
                 .updatedDate(new Date())
                 .build();
         logger.debug("model for users" + userModel);
-        UserModel savedUser = userRepository.save(userModel);
-        if (savedUser.getId() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation error");
-        }
         try {
             Tokens tokens = jwtService.saveTokens(userModel, true);
+            UserModel savedUser = userRepository.save(userModel);
+            if (savedUser.getId() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation error");
+            }
             return ResponseEntity.status(HttpStatus.CREATED).body(tokens);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HttpException(400, "Invalid tokens"));

@@ -7,6 +7,8 @@ import app.auth.jwt.accessTokens.AccessTokenModel;
 import app.auth.jwt.accessTokens.AccessTokenRepository;
 import app.auth.jwt.refreshTokens.RefreshTokenModel;
 import app.auth.jwt.refreshTokens.RefreshTokenRepository;
+import app.utils.GlobalService;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -68,24 +70,38 @@ public class JwtService {
             default -> throw new IllegalArgumentException("Invalid JWT_TYPE value");
         }
         Map<String, String> jwtProperties = new HashMap<>();
-        jwtProperties.put("id", user.getUsername());
+        jwtProperties.put("id", user.getId());
         jwtProperties.put("token_secret", tokenSecret);
         jwtProperties.put("token_expiry", tokenExp);
-        return generateTokenFromUsername(jwtProperties.get("id"), jwtProperties.get("token_secret"),
+        return generateToken(jwtProperties.get("id"), jwtProperties.get("token_secret"),
                 jwtProperties.get("token_expiry"));
     }
 
-    public String generateTokenFromUsername(String username, String token, String expiryDate) {
-
-        return Jwts.builder().setSubject(username).setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + Integer.parseInt(expiryDate)))
-                .signWith(SignatureAlgorithm.HS512, token)
+    public String generateToken(String id, String tokenSecret, String expiryDate) {
+        // String jwtId = UUID.randomUUID().toString();
+        Date issuedAt = new Date();
+        Date expiresAt = new Date(issuedAt.getTime() + Long.parseLong(expiryDate));
+        return Jwts.builder()
+                .setSubject(id)
+                .setIssuer("note-application")
+                .setIssuedAt(issuedAt)
+                .setExpiration(expiresAt)
+                .signWith(SignatureAlgorithm.HS512, tokenSecret)
                 .compact();
     }
 
-    public String getUserNameFromJwtToken(String token) {
-        return Jwts.parser().setSigningKey(jwtRefreshTokenSecret).parseClaimsJws(token).getBody().getSubject();
-    }
+    // public String getUserNameFromJwtToken(String token) {
+    // return
+    // Jwts.parser().setSigningKey(jwtRefreshTokenSecret).parseClaimsJws(token).getBody().getSubject();
+    // }
+
+    // public String getUserIdFromJwtToken(String token) {
+    // System.out.println("BEFORE");
+    // String claims =
+    // Jwts.parser().setSigningKey(jwtRefreshTokenSecret).parseClaimsJws(token).getBody().getSubject();
+    // System.out.println("YYESSSS" + claims);
+    // return claims;
+    // }
 
     public boolean validateJwtToken(String authToken) {
         try {
@@ -120,12 +136,21 @@ public class JwtService {
         }
         String accessToken = generateJwtToken(userModel, JWT_TYPE.ACCESS_TOKEN);
         String refreshToken = generateJwtToken(userModel, JWT_TYPE.REFRESH_TOKEN);
-        AccessTokenModel accessTokenModel = AccessTokenModel.builder().accessTokenValue(accessToken).build();
+        AccessTokenModel accessTokenModel = AccessTokenModel.builder()
+                .id(GlobalService.generateUUID())
+                .accessTokenValue(accessToken)
+                .build();
         accessTokenRepository.save(accessTokenModel);
-        RefreshTokenModel refreshTokenModel = RefreshTokenModel.builder().refreshTokenValue(refreshToken).build();
+        RefreshTokenModel refreshTokenModel = RefreshTokenModel.builder()
+                .id(GlobalService.generateUUID())
+                .refreshTokenValue(refreshToken)
+                .build();
         refreshTokenRepository.save(refreshTokenModel);
-        TokenModel tokenModel = TokenModel.builder().accessToken(accessTokenModel.getId())
-                .refreshToken(refreshTokenModel.getId()).build();
+        TokenModel tokenModel = TokenModel.builder()
+                .id(GlobalService.generateUUID())
+                .accessToken(accessTokenModel.getId())
+                .refreshToken(refreshTokenModel.getId())
+                .build();
         tokenModel.setUserId(userModel.getId());
         tokenRepository.save(tokenModel);
         return new Tokens(accessToken, refreshToken);
