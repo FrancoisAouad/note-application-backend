@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,13 +26,13 @@ import app.auth.UserModel;
 
 @Service
 public class JwtService {
-    private AccessTokenRepository accessTokenRepository;
-    private RefreshTokenRepository refreshTokenRepository;
-    private TokenRepository tokenRepository;
+    private final AccessTokenRepository accessTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final TokenRepository tokenRepository;
     private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
     public JwtService(AccessTokenRepository accessTokenRepository, RefreshTokenRepository refreshTokenRepository,
-            TokenRepository tokenRepository) {
+                      TokenRepository tokenRepository) {
         this.accessTokenRepository = accessTokenRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.tokenRepository = tokenRepository;
@@ -56,15 +57,15 @@ public class JwtService {
         String tokenSecret;
         switch (type) {
             case ACCESS_TOKEN -> {
-                tokenExp = jwtAccessTokenExp + "";
+                tokenExp = String.valueOf(jwtAccessTokenExp);
                 tokenSecret = jwtAccessTokenSecret;
             }
             case REFRESH_TOKEN -> {
-                tokenExp = jwtRefreshTokenExp + "";
+                tokenExp = String.valueOf(jwtRefreshTokenExp);
                 tokenSecret = jwtRefreshTokenSecret;
             }
             case EMAIL_TOKEN -> {
-                tokenExp = jwtEmailTokenExp + "";
+                tokenExp = String.valueOf(jwtEmailTokenExp);
                 tokenSecret = jwtEmailTokenSecret;
             }
             default -> throw new IllegalArgumentException("Invalid JWT_TYPE value");
@@ -123,10 +124,10 @@ public class JwtService {
     }
 
     /**
-     * @function saveTokens - Method that creates the tokens and saves them in their
-     *           tables and sends them back as response
      * @param userModel
      * @param mailToken
+     * @function saveTokens - Method that creates the tokens and saves them in their
+     * tables and sends them back as response
      * @returns Tokens - Object token that has the pair tokens
      */
     public Tokens saveTokens(UserModel userModel, Boolean mailToken) {
@@ -154,5 +155,26 @@ public class JwtService {
         tokenModel.setUserId(userModel.getId());
         tokenRepository.save(tokenModel);
         return new Tokens(accessToken, refreshToken);
+    }
+
+    public String extractUsername(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    public Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parser().setSigningKey(jwtAccessTokenSecret).parseClaimsJws(token).getBody();
+    }
+
+    private Boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
     }
 }

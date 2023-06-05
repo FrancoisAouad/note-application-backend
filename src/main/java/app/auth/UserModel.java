@@ -37,6 +37,9 @@ public class UserModel {
     @Column(name = "password")
     private String password;
 
+//    @Column(name = "image_url", nullable = false)
+//    private String imageUrl;
+
     @Column(name = "email_token")
     private String emailToken;
 

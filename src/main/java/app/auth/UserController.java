@@ -3,39 +3,47 @@ package app.auth;
 // Spring
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 // Services
 import app.auth.dto.RegisterUserDto;
 import app.auth.dto.LoginDto;
-import app.global.exceptions.HttpException;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class UserController {
     @Autowired
     private UserService userService;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterUserDto user) {
-        System.out.println("USER REQUST " + user);
         ResponseEntity<?> result = userService.register(user);
-        System.out.println("RESULT:" + result);
-        return HttpException.handleResponse(result.getStatusCodeValue(), result.getBody());
+        Cookie cookie = (Cookie) result.getBody();
+        HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getResponse();
+        assert response != null;
+        response.addCookie(cookie);
+        return ResponseEntity.status(HttpStatus.OK).body("Success");
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
         ResponseEntity<?> result = userService.login(loginDto);
-        return HttpException.handleResponse(result.getStatusCodeValue(), result.getBody());
+        Cookie cookie = (Cookie) result.getBody();
+        HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getResponse();
+        if (result != null) {
+            System.out.println("COOKIE: " + result);
+            response.addCookie(cookie);
+            return ResponseEntity.status(HttpStatus.OK).body("success");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid login credentials");
     }
 
     @PostMapping("/refresh-token")

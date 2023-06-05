@@ -29,6 +29,8 @@ public class RegisterUserDto {
     @Size(max = 40)
     private String email;
 
+//    private String imageUrl;
+
     @NotBlank
     @Size(min = 8, max = 120)
     private String password;

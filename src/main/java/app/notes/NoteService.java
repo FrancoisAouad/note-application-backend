@@ -1,6 +1,7 @@
 package app.notes;
 
 // Spring
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 // Utils
 import java.util.Date;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 // Services
@@ -28,8 +30,8 @@ public class NoteService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
-     * @function getAllNotes - Method to return list of notes
      * @return
+     * @function getAllNotes - Method to return list of notes
      */
     public ResponseEntity<List<NoteModel>> getAll() {
         List<NoteModel> noteList = noteRepository.findAll();
@@ -43,9 +45,9 @@ public class NoteService {
     }
 
     /**
-     * @function createNote - Method to create a single note
      * @param noteDto - Fields needed to create a note
      * @return
+     * @function createNote - Method to create a single note
      */
     public ResponseEntity<NoteModel> create(CreateNoteDto noteDto) {
         NoteModel newNote = NoteModel.builder()
@@ -78,9 +80,9 @@ public class NoteService {
     }
 
     /**
-     * @function getNoteById - Method to get a single note by its id
      * @param id - uuid if the note
      * @return
+     * @function getNoteById - Method to get a single note by its id
      */
     public ResponseEntity<NoteModel> getById(String id) {
         NoteModel note = noteRepository.findById(id);
@@ -94,10 +96,10 @@ public class NoteService {
     }
 
     /**
-     * @function update
      * @param id
      * @param noteDto
      * @return ResponseEntity<NoteModel>
+     * @function update
      */
     public ResponseEntity<NoteModel> update(String id, UpdateNoteDto noteDto) {
         NoteModel note = noteRepository.findById(id);
@@ -117,9 +119,9 @@ public class NoteService {
     }
 
     /**
-     * @function delete - Deletes a single record
      * @param id
      * @return ResponseEntity<Void>
+     * @function delete - Deletes a single record
      */
     public ResponseEntity<Void> delete(String id) {
         noteRepository.deleteById(id);
@@ -127,9 +129,9 @@ public class NoteService {
     }
 
     /**
-     * @function deleteAll - Deletes a list of records
      * @param id
      * @return ResponseEntity<Void>
+     * @function deleteAll - Deletes a list of records
      */
     public ResponseEntity<Void> deleteAll(List<String> ids) {
         noteRepository.deleteSelected(ids);

@@ -14,10 +14,13 @@ import org.slf4j.Logger;
 import app.utils.GlobalService;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
 @Service
 public class UserService {
-    private UserRepository userRepository;
-    private JwtService jwtService;
+    private final UserRepository userRepository;
+    private final JwtService jwtService;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public UserService(UserRepository userRepository, JwtService jwtService) {
@@ -65,7 +68,11 @@ public class UserService {
         }
         try {
             Tokens tokens = jwtService.saveTokens(userModel, false);
-            return ResponseEntity.status(HttpStatus.OK).body(tokens);
+            Cookie cookie = new Cookie("accessToken", tokens.getAccessToken());
+            // setCookie(cookie);
+            cookie.setHttpOnly(true);
+            cookie.setMaxAge(86400);
+            return ResponseEntity.status(HttpStatus.OK).body(cookie);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HttpException(400, "Invalid tokens"));
         }
